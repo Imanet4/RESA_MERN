@@ -1,0 +1,79 @@
+:root {
+  --dark-green: #1a3e2f;
+  --medium-green: #2d5e4a;
+  --light-green: #3d8b6d;
+  --beige: #f5f5dc;
+  --light-beige: #fafaf5;
+}
+
+body {
+  background-color: var(--light-beige);
+  color: #333;
+}
+
+.navbar-custom {
+  background-color: var(--dark-green) !important;
+}
+
+.btn-custom {
+  background-color: var(--light-green);
+  border-color: var(--light-green);
+  color: white;
+}
+
+.btn-custom:hover {
+  background-color: var(--medium-green);
+  border-color: var(--medium-green);
+}
+
+.card-custom {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-custom:hover {
+  transform: translateY(-5px);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-header {
+  color: var(--dark-green);
+  margin-bottom: 2rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.page-header:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--light-green);
+}
+
+.room-feature {
+  margin-bottom: 0.5rem;
+}
+
+.room-feature i {
+  color: var(--light-green);
+  margin-right: 0.5rem;
+}
