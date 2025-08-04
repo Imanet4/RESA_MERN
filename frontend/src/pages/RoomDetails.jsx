@@ -14,7 +14,7 @@ import {
   faArrowLeft
 } from '@fortawesome/free-solid-svg-icons';
 import BookingForm from '../components/BookingForm';
-import { useCookies } from 'react-cookie';
+import { useAuth } from '../context/AuthContext'
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -22,7 +22,7 @@ const RoomDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
-  const [cookies] = useCookies(['token']);
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const RoomDetails = () => {
               size="lg" 
               className="w-100"
               onClick={() => {
-                if (!cookies.token) {
+                if (!isAuthenticated) {
                   navigate('/login', { state: { from: `/rooms/${id}` } });
                 } else {
                   setShowBookingForm(true);
