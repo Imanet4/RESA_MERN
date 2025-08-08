@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path'); // Missing this for file paths
 
+
 // Load environment variables
 dotenv.config();
 
@@ -12,6 +13,7 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Import error handlers
 const { notFound, errorHandler } = require('./middleware/error');
@@ -44,6 +46,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes); // Changed to /api/auth for consistency
 app.use('/api/rooms', roomRoutes); // Changed to /api/rooms
 app.use('/api/bookings', bookingRoutes); // Changed to /api/bookings
+app.use('/api/admin', adminRoutes);
 
 // Error Handling - Must come after all other middleware and routes
 app.use(notFound);

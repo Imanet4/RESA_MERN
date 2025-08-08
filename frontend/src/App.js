@@ -8,6 +8,7 @@ import Rooms from './pages/Rooms';
 import RoomDetails from './pages/RoomDetails';
 import MyBookings from './pages/MyBookings';
 import NotFound from './pages/NotFound';
+import AdminDashboard from './components/AdminDashboard';
 import { Container } from 'react-bootstrap';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/rooms/:id" element={<RoomDetails />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>

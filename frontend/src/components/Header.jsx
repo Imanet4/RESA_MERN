@@ -3,7 +3,7 @@ import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHotel, faBed, faCalendarAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faHotel, faBed, faCalendarAlt, faUser, faUserShield } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
@@ -29,6 +29,13 @@ const Header = () => {
                 My Bookings
               </Nav.Link>
             )}
+            {isAuthenticated && user && user.role === 'admin' && (
+              <Nav.Link as={Link} to="/admin/dashboard" className="d-flex align-items-center">
+                <FontAwesomeIcon icon={faUserShield} className="me-2" />
+                Admin Dashboard
+              </Nav.Link>
+            )}
+
           </Nav>
           <Nav>
             {isAuthenticated ? (
