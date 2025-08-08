@@ -6,7 +6,7 @@ import { CookiesProvider } from 'react-cookie';
 import { AuthProvider } from './context/AuthContext';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
+import './styles/index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BookingsTable from './admin/BookingsTable';
 import RoomsTable from './admin/RoomsTable';
 import RoomModal from './admin/RoomModal';
+import '../styles/modal.css'
 
 
 
@@ -14,6 +15,19 @@ const AdminDashboard = () => {
   const [rooms, setRooms] = useState([]);
   const [editingRoom, setEditingRoom] = useState(null);
 
+   // Add body class when modal is open
+  useEffect(() => {
+    if (showModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup function
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showModal]);
  
 //Fetching all Bookings
 
@@ -72,7 +86,11 @@ const AdminDashboard = () => {
       formData.append('capacity', roomData.capacity);
       formData.append('amenities', roomData.amenities);
       
-      images.forEach(image => formData.append('images', image));
+      if (images) {
+        Array.from(images).forEach(image => {
+          formData.append('images', image);
+        });
+      }
 
       await axios.post('/admin/rooms', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -84,6 +102,7 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Failed to add room:', error);
       alert(error.response?.data?.message || 'Failed to add room');
+      throw error; // Re-throw to be caught by RoomModal
     }
   };
 
@@ -97,8 +116,10 @@ const AdminDashboard = () => {
       formData.append('capacity', roomData.capacity);
       formData.append('amenities', roomData.amenities);
       
-      if (images.length > 0) {
-        images.forEach(image => formData.append('images', image));
+      if (images && images.length > 0) {
+        Array.from(images).forEach(image => {
+          formData.append('images', image);
+        });
       }
 
       await axios.put(`/admin/rooms/${editingRoom._id}`, formData, {
@@ -111,6 +132,7 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Failed to update room:', error);
       alert(error.response?.data?.message || 'Failed to update room');
+      throw error; // Re-throw to be caught by RoomModal
     }
   };
 
@@ -118,10 +140,13 @@ const AdminDashboard = () => {
     <div className="container mt-4">
       <h1 className="mb-4">Admin Dashboard</h1>
       
-      <button className="btn btn-primary mb-4" onClick={() => {
-        setEditingRoom(null);
-        setShowModal(true);
-      }}>
+      <button 
+        className="btn btn-primary mb-4" 
+        onClick={() => {
+          setEditingRoom(null);
+          setShowModal(true);
+        }}
+      >
         Add New Room
       </button>
 
@@ -145,6 +170,7 @@ const AdminDashboard = () => {
           price: 0,
           capacity: 1,
           amenities: '',
+          images: null
         }}
         onSubmit={editingRoom ? handleUpdateRoom : handleAddRoom}
         isEditing={!!editingRoom}

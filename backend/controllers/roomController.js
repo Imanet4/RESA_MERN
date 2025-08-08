@@ -43,17 +43,30 @@ const getRoom = async (req, res, next) => {
 // Creating a Room
 
 const createRoom = async (req, res, next) => {
-    try {
-        req.body.user = req.user.id;
+  try {
+    const { name, description, price, capacity, amenities } = req.body;
+    
+    // Handle image upload (for single image)
+    const image = req.file ? req.files.map(file => `/uploads/${file.filename}`) : [];
 
-        const room = await Room.create(req.body);
-        res.status(201).json({
-            success: true,
-            data: room
-        });
-    } catch (err) {
-        next(err);
-    }
+
+    const room = await Room.create({
+      name,
+      description,
+      price: Number(price),
+      capacity: Number(capacity),
+      amenities: Array.isArray(amenities) ? amenities : amenities.split(',').map(item => item.trim()),
+      images: image ? [image] : [], // Store as array for consistency
+      user: req.user.id
+    });
+
+    res.status(201).json({
+      success: true,
+      data: room
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 //Updating a room
