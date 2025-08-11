@@ -174,33 +174,14 @@ const updateBooking = async (req, res, next) => {
 
 //DELETE A RESA
 
-const deleteBooking = async (req, res, next) => {
-  try {
-    const booking = await Booking.findById(req.params.id);
+const deleteBooking = async (req, res) => {
+ const booking = await Booking.findByIdAndDelete(req.params.id);
+    
     if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: 'Booking not found'
-      });
+        return res.status(404).json({ msg: `No booking with id ${req.params.id}` });
     }
 
-    // Make sure user is booking owner or admin
-    if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to delete this booking'
-      });
-    }
-
-    await booking.remove();
-
-    res.status(200).json({
-      success: true,
-      data: {}
-    });
-  } catch (err) {
-    next(err);
-  }
+    res.status(200).json({ msg: 'Booking deleted successfully' });
 };
 
 module.exports = {

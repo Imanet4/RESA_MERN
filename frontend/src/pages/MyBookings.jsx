@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Card, Spinner, Alert, Button, Badge } from 'react-bootstrap';
 import API from '../utils/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,6 +27,13 @@ const MyBookings = () => {
   }, []);
 
   const cancelBooking = async (id) => {
+    //Confirmation before cancellation
+    const isConfirmed = window.confirm('Are you sure you want to cancel this booking?');
+
+    if (!isConfirmed) {
+      return; //Exit when the user cancels the confirmation dialog
+    }
+
     try {
       await API.delete(`/bookings/${id}`);
       setBookings(bookings.filter(booking => booking._id !== id));
