@@ -80,8 +80,23 @@ const updateRoom = async (req, res, next) => {
                 message: 'Room not found'
             });
         }
+    //Handling file upload
+        const updates = {
+          ...req.body,
+          //Only update images if they are provided
+          ...(req.file && { images: [`/uploads/${req.file.filename}`] })
+        };
+        // If amenities is a string, convert it to an array
+        if (updates.amenities && typeof updates.amenities === 'string') {
+            updates.amenities = updates.amenities.split(',').map(item => item.trim());
+        }
 
-        room = await Room.findByIdAndUpdate(req.params.id, req.body, {
+        //Converting numerical fields if needed
+        if (updates.price) updates.price = Number(updates.price);
+        if (updates.capacity) updates.capacity = Number(updates.capacity);
+
+        // Update the room with the new data
+        room = await Room.findByIdAndUpdate(req.params.id, updates, {
             new: true,
             runValidators: true
         });

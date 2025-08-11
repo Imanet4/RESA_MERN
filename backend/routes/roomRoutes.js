@@ -24,11 +24,18 @@ router.route('/')
 
 router.route('/:id')
   .get(getRoom) //Getting single room
-  .put(protect, authorize('admin'), updateRoom) // update room details (admin ONLY)
+  .put(
+    protect, 
+    authorize('admin'),
+    upload.single('image'), // Single image upload for room update
+    updateRoom) // update room details (admin ONLY)
   .delete(protect, authorize('admin'), deleteRoom); // Delete room (admin Only)
 
 router.route('/:id/photo')
-  .put(protect, authorize('admin'), upload.array('images', 5) ,uploadImage);
+  .put(protect, 
+    authorize('admin'), 
+    upload.array('images', 5),
+    uploadImage);
 
 
 module.exports = router;

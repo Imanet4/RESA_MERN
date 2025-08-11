@@ -122,12 +122,19 @@ const AdminDashboard = () => {
         });
       }
 
-      await axios.put(`/admin/rooms/${editingRoom._id}`, formData, {
+      const { data } = await axios.put(`/rooms/${editingRoom._id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+
+      //Updating local state
+      setRooms(rooms.map(room =>
+        room._id === editingRoom._id ? data : room
+      ));
       
       alert('Room updated successfully');
       setShowModal(false);
+
+      // Calling fetchAllRooms to ensure complete sync with server
       fetchAllRooms();
     } catch (error) {
       console.error('Failed to update room:', error);
