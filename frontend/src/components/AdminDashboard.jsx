@@ -66,12 +66,19 @@ const AdminDashboard = () => {
   const handleDeleteRoom = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
-        await axios.delete(`/admin/rooms/${roomId}`);
+        await axios.delete(`/rooms/${roomId}`);
+
+        //Removing from state immediately (ensuring UI updates)
+        setRooms(prevRooms => prevRooms.filter(room => room._id !== roomId));
+
         alert('Room deleted successfully');
-        fetchAllRooms();
+        
       } catch (error) {
         console.error('Failed to delete room:', error);
         alert(error.response?.data?.message || 'Failed to delete room');
+
+        //Re-fetching rooms to ensure state consistency
+        fetchAllRooms();
       }
     }
   };

@@ -126,15 +126,14 @@ const deleteRoom = async (req, res, next) => {
         }
 
     // DELETE ASSOCIATED IMAGES:
-
         room.images.forEach(image => {
             const imagePath = path.join(__dirname, '../uploads', image);
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
             }
         });
-
-        await room.remove();
+        // Delete the room from the database
+        await room.deleteOne({ _id: req.params.id });
 
         res.status(200).json({
             success: true,
