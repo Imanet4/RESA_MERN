@@ -30,7 +30,7 @@ app.use(cors({
 }));
 
 // Serve static files (for uploaded room images)
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+app.use('/uploads', express.static('uploads'));
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI)
@@ -39,7 +39,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Test route
 app.get('/', (req, res) => {
-    res.send('Hotel Booking API');
+    res.send('LUXESTAYS Booking API');
 });
 
 // Routes

@@ -69,17 +69,21 @@ const RoomDetails = () => {
       <Row className="mb-5">
         <Col lg={8}>
           <Carousel className="mb-4 rounded-3 overflow-hidden">
-            {room.images.map((image, index) => (
-              <Carousel.Item key={index}>
-                <img
-                  className="d-block w-100"
-                  src={`http://localhost:8000/uploads/${image}`}
-                  alt={`Room ${index + 1}`}
-                  style={{ height: '500px', objectFit: 'cover' }}
-                />
-              </Carousel.Item>
-            ))}
-          </Carousel>
+  {room.images.map((image, index) => (
+    <Carousel.Item key={index}>
+      <img
+        className="d-block w-100"
+        src={
+          image.startsWith('/uploads/')
+            ? `http://localhost:8000${image}`
+            : `http://localhost:8000/uploads/${image}`
+        }
+        alt={`Room ${index + 1}`}
+        style={{ height: '500px', objectFit: 'cover' }}
+      />
+    </Carousel.Item>
+  ))}
+</Carousel>
         </Col>
         <Col lg={4}>
           <div className="bg-white p-4 rounded-3 shadow-sm h-100">

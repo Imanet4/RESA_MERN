@@ -47,7 +47,7 @@ const createRoom = async (req, res, next) => {
     const { name, description, price, capacity, amenities } = req.body;
     
     // Handle image upload (for single image)
-    const image = req.file ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    const image = req.file ? req.files.map(file => `uploads/${file.filename}`) : [];
 
 
     const room = await Room.create({
