@@ -8,8 +8,8 @@ const RoomModal = ({
   onSubmit, 
   isEditing 
 }) => {
-  const [roomData, setRoomData] = useState(
-    {name: '',
+  const [roomData, setRoomData] = useState({
+    name: '',
     description: '',
     price: 0,
     capacity: 1,
@@ -67,7 +67,6 @@ return (
     {/* Backdrop */}
     <div 
       className="modal-backdrop fade show" 
-      onClick={onClose}
       style={{
         position: 'fixed',
         top: 0,
@@ -91,12 +90,9 @@ return (
         zIndex: 1050
       }}
       tabIndex="-1"
-      onClick={onClose}
     >
       <div 
-        className="modal-dialog modal-dialog-centered"
-        onClick={e => e.stopPropagation()}
-      >
+        className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header bg-light">
             <h5 className="modal-title">
