@@ -10,14 +10,18 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
+      console.log('Fetching bookings...'); // Debug log
       try {
         const res = await API.get('/bookings/mybookings');
-        setBookings(res.data.data);
+        console.log('Bookings data:', res.data); // Debug log
+        setBookings(res.data.data || []);
       } catch (err) {
+        console.error('Error fetching bookings:', err); // Debug log
         setError(err.response?.data?.message || 'Failed to fetch bookings');
       } finally {
         setLoading(false);
@@ -26,7 +30,7 @@ const MyBookings = () => {
     fetchBookings();
   }, []);
 
-  const cancelBooking = async (id) => {
+   const cancelBooking = async (id) => {
     //Confirmation before cancellation
     const isConfirmed = window.confirm('Are you sure you want to cancel this booking?');
 
@@ -60,7 +64,7 @@ const MyBookings = () => {
     );
   }
 
-  return (
+   return (
     <Container className="py-5">
       <h1 className="page-header mb-5">
         <FontAwesomeIcon icon={faCalendarAlt} className="me-3" />
@@ -85,7 +89,7 @@ const MyBookings = () => {
                   <div>
                     <h4>
                       <FontAwesomeIcon icon={faHotel} className="me-2 text-dark-green" />
-                      {booking.room.name}
+                      {booking.room?.name || 'Unknown Room'}
                     </h4>
                     <Badge bg={booking.status === 'confirmed' ? 'success' : 'secondary'}>
                       {booking.status}
@@ -95,6 +99,7 @@ const MyBookings = () => {
                     variant="outline-danger" 
                     size="sm"
                     onClick={() => cancelBooking(booking._id)}
+                    disabled={booking.status !== 'confirmed'}
                   >
                     <FontAwesomeIcon icon={faTimes} className="me-1" />
                     Cancel
@@ -118,7 +123,7 @@ const MyBookings = () => {
                     <small className="text-muted">Total</small>
                     <p className="mb-0 fw-bold text-success">
                       <FontAwesomeIcon icon={faReceipt} className="me-1" />
-                      ${booking.totalPrice.toFixed(2)}
+                      ${booking.totalPrice?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </div>
@@ -127,7 +132,7 @@ const MyBookings = () => {
                   <Button 
                     variant="outline-dark-green" 
                     size="sm"
-                    onClick={() => navigate(`/rooms/${booking.room._id}`)}
+                    onClick={() => navigate(`/rooms/${booking.room?._id}`)}
                   >
                     View Room Details
                   </Button>
