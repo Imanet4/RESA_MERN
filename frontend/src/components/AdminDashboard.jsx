@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from '../utils/api'; // Using our configured axios
+import axios from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import BookingsTable from './admin/BookingsTable';
 import RoomsTable from './admin/RoomsTable';
 import RoomModal from './admin/RoomModal';
-import '../styles/modal.css'
-
-
+import '../styles/modal.css';
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
@@ -15,7 +14,7 @@ const AdminDashboard = () => {
   const [rooms, setRooms] = useState([]);
   const [editingRoom, setEditingRoom] = useState(null);
 
-   // Add body class when modal is open
+  // Add body class when modal is open
   useEffect(() => {
     if (showModal) {
       document.body.classList.add('modal-open');
@@ -23,14 +22,12 @@ const AdminDashboard = () => {
       document.body.classList.remove('modal-open');
     }
     
-    // Cleanup function
     return () => {
       document.body.classList.remove('modal-open');
     };
   }, [showModal]);
  
-//Fetching all Bookings
-
+  // Fetching all Bookings
   const fetchAllBookings = useCallback(async () => {
     try {
       const { data } = await axios.get('/admin/bookings');
@@ -40,20 +37,19 @@ const AdminDashboard = () => {
         navigate('/login');
       }
       console.error('Error:', error);
+      toast.error('Failed to fetch bookings');
     }
   }, [navigate]);
 
-
-  //fetching all rooms
-
+  // Fetching all rooms
   const fetchAllRooms = useCallback(async () => {
     try {
       const { data } = await axios.get('/rooms');
       setRooms(data.data || data.rooms || data);
     } catch (error) {
       console.error('Failed to fetch rooms:', error);
-      alert('Failed to fetch rooms');
-      setRooms([]); // setting the empty array on error
+      toast.error('Failed to fetch rooms');
+      setRooms([]);
     }
   }, []);
 
@@ -62,24 +58,15 @@ const AdminDashboard = () => {
     fetchAllRooms();
   }, [fetchAllBookings, fetchAllRooms]);
 
-  // Handle room deletion
+  // Simplified delete handler - just does the API call and state update
   const handleDeleteRoom = async (roomId) => {
-    if (window.confirm('Are you sure you want to delete this room?')) {
-      try {
-        await axios.delete(`/rooms/${roomId}`);
-
-        //Removing from state immediately (ensuring UI updates)
-        setRooms(prevRooms => prevRooms.filter(room => room._id !== roomId));
-
-        alert('Room deleted successfully');
-        
-      } catch (error) {
-        console.error('Failed to delete room:', error);
-        alert(error.response?.data?.message || 'Failed to delete room');
-
-        //Re-fetching rooms to ensure state consistency
-        fetchAllRooms();
-      }
+    try {
+      await axios.delete(`/rooms/${roomId}`);
+      setRooms(prevRooms => prevRooms.filter(room => room._id !== roomId));
+      return true; // Indicate success to RoomsTable
+    } catch (error) {
+      console.error('Failed to delete room:', error);
+      throw error; // Will be caught by RoomsTable
     }
   };
 
@@ -103,13 +90,13 @@ const AdminDashboard = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      alert('Room added successfully');
+      toast.success('Room added successfully');
       setShowModal(false);
       fetchAllRooms();
     } catch (error) {
       console.error('Failed to add room:', error);
-      alert(error.response?.data?.message || 'Failed to add room');
-      throw error; // Re-throw to be caught by RoomModal
+      toast.error(error.response?.data?.message || 'Failed to add room');
+      throw error;
     }
   };
 
@@ -133,20 +120,17 @@ const AdminDashboard = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      //Updating local state
       setRooms(rooms.map(room =>
         room._id === editingRoom._id ? data : room
       ));
       
-      alert('Room updated successfully');
+      toast.success('Room updated successfully');
       setShowModal(false);
-
-      // Calling fetchAllRooms to ensure complete sync with server
       fetchAllRooms();
     } catch (error) {
       console.error('Failed to update room:', error);
-      alert(error.response?.data?.message || 'Failed to update room');
-      throw error; // Re-throw to be caught by RoomModal
+      toast.error(error.response?.data?.message || 'Failed to update room');
+      throw error;
     }
   };
 

@@ -11,6 +11,8 @@ import MyBookings from './pages/MyBookings';
 import NotFound from './pages/NotFound';
 import AdminDashboard from './components/AdminDashboard';
 import { Container } from 'react-bootstrap';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -28,6 +30,18 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
+       <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </>
   );
 }

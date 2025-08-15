@@ -4,25 +4,29 @@ import API from '../utils/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faHotel, faReceipt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ConfirmationModal from '../components/common/ConfirmationModal';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelBookingId, setCancelBookingId] = useState(null);
   
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
-      console.log('Fetching bookings...'); // Debug log
+      console.log('Fetching bookings...');
       try {
         const res = await API.get('/bookings/mybookings');
-        console.log('Bookings data:', res.data); // Debug log
+        console.log('Bookings data:', res.data);
         setBookings(res.data.data || []);
       } catch (err) {
-        console.error('Error fetching bookings:', err); // Debug log
+        console.error('Error fetching bookings:', err);
         setError(err.response?.data?.message || 'Failed to fetch bookings');
+        toast.error(err.response?.data?.message || 'Failed to fetch bookings');
       } finally {
         setLoading(false);
       }
@@ -30,19 +34,22 @@ const MyBookings = () => {
     fetchBookings();
   }, []);
 
-   const cancelBooking = async (id) => {
-    //Confirmation before cancellation
-    const isConfirmed = window.confirm('Are you sure you want to cancel this booking?');
+  const handleCancelBooking = (id) => {
+    setCancelBookingId(id);
+    setShowCancelModal(true);
+  };
 
-    if (!isConfirmed) {
-      return; //Exit when the user cancels the confirmation dialog
-    }
-
+  const confirmCancel = async () => {
     try {
-      await API.delete(`/bookings/${id}`);
-      setBookings(bookings.filter(booking => booking._id !== id));
+      await API.delete(`/bookings/${cancelBookingId}`);
+      setBookings(bookings.filter(booking => booking._id !== cancelBookingId));
+      toast.success('Booking cancelled successfully!');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to cancel booking');
+      console.error('Error cancelling booking:', err);
+      toast.error(err.response?.data?.message || 'Failed to cancel booking');
+    } finally {
+      setShowCancelModal(false);
+    setCancelBookingId(null);
     }
   };
 
@@ -64,7 +71,7 @@ const MyBookings = () => {
     );
   }
 
-   return (
+  return (
     <Container className="py-5">
       <h1 className="page-header mb-5">
         <FontAwesomeIcon icon={faCalendarAlt} className="me-3" />
@@ -98,7 +105,7 @@ const MyBookings = () => {
                   <Button 
                     variant="outline-danger" 
                     size="sm"
-                    onClick={() => cancelBooking(booking._id)}
+                    onClick={() => handleCancelBooking(booking._id)}
                     disabled={booking.status !== 'confirmed'}
                   >
                     <FontAwesomeIcon icon={faTimes} className="me-1" />
@@ -142,6 +149,16 @@ const MyBookings = () => {
           ))}
         </div>
       )}
+
+      <ConfirmationModal
+        show={showCancelModal}
+        onHide={() => setShowCancelModal(false)}
+        onConfirm={confirmCancel}
+        title="Cancel Booking Confirmation"
+        message="This will cancel your reservation. Any payments made may be subject to cancellation fees."
+        confirmText="Confirm Cancellation"
+        variant="danger"
+      />
     </Container>
   );
 };
